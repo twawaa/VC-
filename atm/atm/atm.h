@@ -8,7 +8,7 @@
 // 文字列長
 #define CHARBUFF 124
 
-// iniファイルから読み込んだユーザ情報
+// iniファイルから読み込んだユーザ情報の構造体宣言
 typedef struct user
 {
 	char PIN[CHARBUFF];			// 暗証番号
