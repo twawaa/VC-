@@ -26,8 +26,8 @@ unsigned char checkPIN(USER* user)
 			// 取引終了
 			break;
 		}
-		else if (strncmp(buf, user->PIN, 4) == 0) {
-			// 入力した暗証番号がユーザ情報と一致したとき
+		else if ((strlen(buf) == 5) && (strncmp(buf, user->PIN, 4) == 0)) {
+			// 入力した暗証番号が4桁かつユーザ情報と一致したとき
 			flg = 1;
 		}
 		else {

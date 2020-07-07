@@ -1,77 +1,72 @@
-ï»¿/******************************************************/
-/* ATMã‚·ã‚¹ãƒ†ãƒ ãƒ¡ã‚¤ãƒ³ãƒ—ãƒ­ã‚°ãƒ©ãƒ (å…¥åŠ›ã¨å‡ºåŠ›)            */
 /******************************************************/
-
+/* ATMƒVƒXƒeƒ€ƒƒCƒ“ƒvƒƒOƒ‰ƒ€                        */
+/******************************************************/
 #include "atm.h"
 #include <stdio.h>
 #include <Windows.h>
 
-/* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå–å¾—*/
-// æˆ»ã‚Šå€¤ï¼šãªã—
+// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠæ“¾
+// –ß‚è’lF‚È‚µ
 void getGurrentDirectory(char* currentDirectory)
 {
 	GetCurrentDirectory(CHARBUFF, currentDirectory);
 }
 
-/*ãƒ¡ã‚¤ãƒ³ãƒ—ãƒ­ã‚°ãƒ©ãƒ */
-int main()
-{   
-    //ãƒ•ã‚¡ã‚¤ãƒ«ãƒã‚¤ãƒ³ã‚¿
-    FILE* fp;
-    errno_t error;
-    //ãƒ¦ãƒ¼ã‚¶æƒ…å ±
-    USER user;
-    //å£åº§æ®‹é«˜ä¿å­˜ç”¨
-    char buf[CHARBUFF] = {0};
+// ƒƒCƒ“ƒvƒƒOƒ‰ƒ€
+int main(void)
+{
+	// ƒtƒ@ƒCƒ‹ƒ|ƒCƒ“ƒ^
+	FILE* fp;
+	errno_t error;
+	// ƒ†[ƒUî•ñ
+	USER user;
+	// ŒûÀc‚•Û‘¶—p
+	char buf[CHARBUFF] = { 0 };
 
-    error = fopen_s(&fp, "Results.txt", "w");
-    if (error != 0) {
-        //ãƒ•ã‚¡ã‚¤ãƒ«ã‚ªãƒ¼ãƒ—ãƒ³ã‚¨ãƒ©ãƒ¼
-        fprintf_s(stderr, "failed to open");
-        return -1;
-    }
+	error = fopen_s(&fp, "Results.txt", "w");
+	if (error != 0) {
+		// ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“ƒGƒ‰[
+		fprintf_s(stderr, "failed to open");
+		return -1;
+	}
 
-	//ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+	// ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ
 	char currentDirectory[CHARBUFF];
 	getGurrentDirectory(currentDirectory);
 
-	// iniãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã¿
+	// iniƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚İ
 	char section[CHARBUFF];
 	sprintf_s(section, CHARBUFF, "user");
 	char keyWord[CHARBUFF];
 	sprintf_s(keyWord, CHARBUFF, "PIN");
 	char settingFile[CHARBUFF];
-	sprintf_s(settingFile, CHARBUFF, "%setting.ini", currentDirectory);
-
-	//æš—è¨¼ç•ªå·ã®èª­ã¿è¾¼ã¿
+	sprintf_s(settingFile, CHARBUFF, "%s\\setting.ini", currentDirectory);
+	// ˆÃØ”Ô†‚Ì“Ç‚İ‚İ
 	if (GetPrivateProfileString(section, keyWord, "none", user.PIN, CHARBUFF, settingFile) == 0) {
-		//èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼
-		fprintf_s(stderr, "fileld to read PIN");
+		// “Ç‚İ‚İƒGƒ‰[
+		fprintf_s(stderr, "failed to read PIN");
 		return -1;
 	}
-	// å£åº§æ®‹é«˜ã®èª­ã¿è¾¼ã¿
+	// ŒûÀc‚‚Ì“Ç‚İ‚İ
 	sprintf_s(keyWord, CHARBUFF, "Money");
 	if (GetPrivateProfileString(section, keyWord, "none", buf, CHARBUFF, settingFile) == 0) {
-		//èª­ã¿è¾¼ã¿ã‚¨ãƒ©ãƒ¼
-		fprintf_s(stderr, "fileld to read Money");
+		// “Ç‚İ‚İƒGƒ‰[
+		fprintf_s(stderr, "failed to read Money");
 		return -1;
 	}
 	user.Money = strtoull(buf, NULL, 10);
 
-	//ãƒ¡ã‚¤ãƒ³ç”»é¢ã®è¡¨ç¤º
+	// ƒƒCƒ“‰æ–Ê‚Ì•\¦
 	mainScreen(fp, &user);
 
-	// å£åº§æ®‹é«˜ã‚’iniãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã¿
-	sprintf_s(buf, CHARBUFF, "%llu",user.Money);
+	// ŒûÀc‚‚ğiniƒtƒ@ƒCƒ‹‚É‘‚«‚İ
+	sprintf_s(buf, CHARBUFF, "%llu", user.Money);
 	sprintf_s(keyWord, CHARBUFF, "Money");
 	WritePrivateProfileString(section, keyWord, buf, settingFile);
 
-	// å£åº§æ®‹é«˜ã‚’result.txtã«æ›¸ãè¾¼ã¿
+	// ŒûÀc‚‚ğresult.txt‚É‘‚«‚İ
 	fprintf_s(fp, "end of transaction : money=%llu\n", user.Money);
-	// ãƒ•ã‚¡ã‚¤ãƒ«ã‚¯ãƒ­ãƒ¼ã‚º
+	// ƒtƒ@ƒCƒ‹ƒNƒ[ƒY
 	fclose(fp);
 	return 0;
-
-
-
 }
