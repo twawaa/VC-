@@ -4,6 +4,7 @@
 
 #include "atm.h"
 #include <stdio.h>
+#include <Windows.h>
 
 /* カレントディレクトリ取得*/
 // 戻り値：なし
@@ -12,15 +13,12 @@ void getGurrentDirectory(char* currentDirectory)
 	GetCurrentDirectory(CHARBUFF, currentDirectory);
 }
 
-
-
 /*メインプログラム*/
 int main()
 {   
     //ファイルポインタ
     FILE* fp;
     errno_t error;
-
     //ユーザ情報
     USER user;
     //口座残高保存用
@@ -33,74 +31,43 @@ int main()
         return -1;
     }
 
-	//////////////////////////////////////////////////////////////////////////
-	
-	//暗証番号入力画面
-	printf("****************************************\n");
-	printf("*   暗証番号を4桁で入力してください    *\n");
-	printf("*   Q:お取引終了                       *\n");
-	printf("****************************************\n");
-		//暗証番号間違っている
-		printf("****************************************\n");
-		printf("*   暗証番号が間違っています           *\n");
-		printf("*   Enter:次へ                         *\n");
-		printf("****************************************\n");
-
-	//残高照会画面
-	printf("****************************************\n");
-	printf("*   残高照会画面                       *\n");
-	printf("*   口座残高はこちらです               *\n");
-	printf("*   %28llu 円    *\n", user->Money);
-	printf("*   Q:お取引終了                       *\n");
-	printf("*   Enter:メイン画面へ                 *\n");
-	printf("****************************************\n");
-
-	//預入画面
-	printf("****************************************\n");
-	printf("*   お預入れ画面                       *\n");
-	printf("*   お預入れ金額を入力して下さい       *\n");
-	printf("*   Q:お取引終了                       *\n");
-	printf("****************************************\n");
-		//取引完了画面
-		printf("****************************************\n");
-		printf("*   お預入れが完了しました             *\n");
-		printf("*   Enter:次へ                         *\n");
-		printf("****************************************\n");
-
-	//引き出し画面
-	printf("****************************************\n");
-	printf("*   お引出し画面                       *\n");
-	printf("*   お引出し金額を入力して下さい       *\n");
-	printf("*   Q:お取引終了                       *\n");
-	printf("****************************************\n");
-		//残高不足画面
-		printf("****************************************\n");
-		printf("*   残高不足です                       *\n");
-		printf("*   Enter:次へ                         *\n");
-		printf("****************************************\n");
-		//引き出し画面
-		printf("****************************************\n");
-		printf("*   お金をお受け取り下さい             *\n");
-		printf("*   Enter:次へ                         *\n");
-		printf("****************************************\n");
-	////////////////////////////////////////////////////////////////////////
-
 	//カレントディレクトリ
 	char currentDirectory[CHARBUFF];
 	getGurrentDirectory(currentDirectory);
 
 	// iniファイルから読み込み
-	
-	
-	// 暗証番号の読み込み
-	
+	char section[CHARBUFF];
+	sprintf_s(section, CHARBUFF, "user");
+	char keyWord[CHARBUFF];
+	sprintf_s(keyWord, CHARBUFF, "PIN");
+	char settingFile[CHARBUFF];
+	sprintf_s(settingFile, CHARBUFF, "%setting.ini", currentDirectory);
+
+	//暗証番号の読み込み
+	if (GetPrivateProfilrString(section, keyWord, "none", user.PIN, CHARBUFF, settingFile) == 0) {
+		//読み込みエラー
+		fprintf_s(stderr, "fileld to read PIN");
+		return -1;
+	}
 	// 口座残高の読み込み
-	
+	sprintf_s(keyWord, CHARBUFF, "Money");
+	if (GetPrivateProfilesString(section, keyWord, "none", buf, CHARBUFF, settingFile) == 0) {
+		//読み込みエラー
+		fprintf_s(stderr, "fileld to read Money")
+		return -1;
+	}
+	user.Money = strtoull(buf, NULL, 10);
+
+	//メイン画面の表示
+	mainScreen(fp, &user);
+
 	// 口座残高をiniファイルに書き込み
-	
+	sprintf_s(buf, ChARBUFF, "%llu".user.Money);
+	sprintf_s(keyWorf, CHARBUFF, "Money");
+	WritePrivateProfileString(section, keyWord, buf, settingFile);
 
 	// 口座残高をresult.txtに書き込み
-	
+	sprint_s(fp, "end of transaction : money=%llu\n", user.Money);
 	// ファイルクローズ
 	fclose(fp);
 	return 0;
