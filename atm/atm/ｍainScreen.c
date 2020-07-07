@@ -23,7 +23,7 @@ void maintitle()
 
 /*ƒƒCƒ“‰æ–Ê*/
 //–ß‚è’l‚È‚µ
-void mainScreen(FILE* hp, USER* user)
+void mainScreen(FILE* fp, USER* user)
 {
 	char buf[CHARBUFF] = { 0 };
 	int value = 0;
